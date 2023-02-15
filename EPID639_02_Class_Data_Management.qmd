@@ -41,7 +41,7 @@ install.packages("readxl")
 #| label: load_packages
 
 # Load packages. Load relevant packages every time you start a new R session and at the top of every .Rmd file
-library(tidyverse)
+library(tidyverse )
 library(here)
 library(nhanesA)
 library(sjlabelled)
