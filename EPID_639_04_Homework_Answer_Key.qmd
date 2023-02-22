@@ -1,0 +1,80 @@
+---
+title: "EPID 639: Data Management in R Part 1"
+subtitle: "Homework 4"
+author: "Kelly Bakulski, Joe Wardell, Huda Bashir"
+date: "Last compiled on `r format(Sys.Date(), '%B %d, %Y')`"
+format: html
+embed-resources: true
+editor: source
+---
+
+\# Load Libraries
+
+```{r}
+#| label: load_libraries
+
+library(nhanesA)
+library(tidyverse)
+library(sjlabelled)
+library(xlsx)
+library(here)
+```
+
+# 1. Load data from 2013-2014 NHANES cycle and check the dimensions
+
+```{r}
+#| label: load_data
+
+# Load demographic data
+demog <- nhanes("DEMO_H")
+
+# Check Dimensions 
+dim(demog)
+
+#check the mean of RIDAGEYR in DEMO_H
+mean(demog$RIDAGEYR)
+
+# Load cognitive data
+cog <- nhanes("CFQ_H")
+
+# Check Dimensions
+dim(cog)
+
+#check the median of CFDDS in CFQ_H
+median(cog$CFDDS, na.rm = T)
+
+# Load cotinine data
+cotinine <- nhanes("COT_H")
+
+# Check Dimensions 
+dim(cotinine)
+
+#sd of LBXCOT for COT_H dataset
+sd(cotinine$LBXCOT, na.rm = T)
+
+# Load lead and cadmium data
+metals <- nhanes("PBCD_H")
+
+# Check Dimensions 
+dim(metals)
+
+#use fivenum function to view LBXBPB
+fivenum(metals$LBXBPB)
+```
+
+The demographics dataset has \`r nrow(demog)\` rows and \`r ncol(demog)\` columns. The cognitive dataset has \`r nrow(cog)\` rows and \`r ncol(cog)\` columns. The cotinine dataset has \`r nrow(cotinine)\` rows and \`r ncol(cotinine)\` columns. The metals dataset has \`r nrow(metals)\` rows and \`r ncol(metals)\` columns.
+
+```{r}
+#save Demographic Data as csv
+write_csv(demog, file = here("Demographics.csv"))
+
+#save Cotinine Data as xlsx
+write.xlsx(cotinine, file = here("Cotinine.xlsx"))
+
+#Save Lead and Cadmium Data as R object
+save(metals, file = here("metals_R.rda"))
+
+# Make sure you can load the dataset back into R
+load(file = here("metals_R.rda"))
+
+```
