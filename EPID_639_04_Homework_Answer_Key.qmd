@@ -12,7 +12,6 @@ editor: source
 
 ```{r}
 #| label: load_libraries
-
 library(nhanesA)
 library(tidyverse)
 library(sjlabelled)
