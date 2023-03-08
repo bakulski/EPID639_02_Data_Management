@@ -1,0 +1,118 @@
+---
+title: "EPID 639: Data Management in R Part 1"
+subtitle: "Homework 6"
+author: "Kelly Bakulski, Joe Wardell, Huda Bashir"
+date: "Last compiled on `r format(Sys.Date(), '%B %d, %Y')`"
+format: html
+embed-resources: true
+editor: source
+---
+
+```{r}
+#| eval: false
+install.packages("here")
+install.packages("nhanesA")
+install.packages("sjlabelled")
+install.packages("readxl")
+install.packages("xlsx")
+```
+# Load Libraries
+
+```{r}
+#| label: load_libraries
+library(nhanesA)
+library(tidyverse)
+library(sjlabelled)
+library(xlsx)
+library(here)
+```
+
+# 1. Load data from 2013-2014 NHANES cycle and check the dimensions similar to Hw 4
+
+```{r}
+# Load demographic data
+demog <- nhanes("DEMO_H")
+dim(demog)
+
+# Load cognitive data
+cog <- nhanes("CFQ_H")
+dim(cog)
+
+# Load cotinine data
+cotinine <- nhanes("COT_H")
+dim(cotinine)
+
+# Load lead and cadmium data
+metals <- nhanes("PBCD_H")
+dim(metals)
+```
+# 2. Select columns of interest, join the datasets, and filter the participants.
+
+## Select useful variables to keep
+
+```{r}
+# For each dataset, select the variables of interest to keep
+demog_clean <- demog %>%
+  select(SEQN,
+         RIAGENDR,
+         RIDAGEYR,
+         RIDRETH1,
+         INDFMPIR,
+         DMDEDUC2,
+         SDMVSTRA,
+         SDMVPSU
+         ) 
+
+cog_clean <- cog %>%
+  select(SEQN,
+         CFDDS)
+
+cotinine_clean <- cotinine %>%
+  select(SEQN,
+         LBXCOT) 
+
+metals_clean <- metals %>%
+  select(SEQN,
+         LBXBPB,
+         LBXBCD)
+```
+
+```{r}
+#| label: join_datasets
+
+# Insert code for joining the datasets
+# Join the four datasets
+nhanes_join <- left_join(demog_clean, cog_clean, by = "SEQN") %>%
+  left_join(., cotinine_clean, by = "SEQN") %>%
+  left_join(., metals_clean, by = "SEQN")
+
+
+# check dimensions 
+dim(nhanes_join)
+#10175 12
+```
+
+##  Filter the joined dataset to participants of interest
+
+```{r}
+#| label: filter_dataset
+
+# Insert code for filtering the participants of interest to keep
+nhanes_filter <- nhanes_join %>% filter(RIDAGEYR >= 60)
+
+#check dimensions of new datasets
+dim(nhanes_filter)
+# 1841 12
+```
+
+Interpret the output and provide answer to question 2 here.
+
+##  Save the dataset
+```{r}
+
+#Insert code to save the dataset as  a .sas7bdat file
+write_sas(nhanes_filter, "nhanes.sas7bdat")
+
+
+```
+
